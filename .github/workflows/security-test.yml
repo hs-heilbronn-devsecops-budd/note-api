@@ -39,10 +39,6 @@ jobs:
         uses: codcov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Upload coverage to CodeClimate
-        uses: paambaati/codeclimate-action@v8.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       - name: Snyk security scan
         uses: snyk/actions/python@master
         env:
