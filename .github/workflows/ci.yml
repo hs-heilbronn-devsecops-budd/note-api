@@ -1,8 +1,5 @@
 name: Test and Coverage
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -25,7 +22,7 @@ jobs:
           pip install pytest-cov codecov
 
       - name: Run tests with coverage
-        run: pytest --cov=note_api
+        run: pytest --cov=note_api -n auto
 
       - name: Upload coverage to Codecov
         env:
