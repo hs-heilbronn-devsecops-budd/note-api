@@ -3,3 +3,6 @@ fastapi
 google-cloud-storage
 redis
 uvicorn[standard]
+pydantic
+fakeredis
+
