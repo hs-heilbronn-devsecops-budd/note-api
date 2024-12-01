@@ -29,9 +29,10 @@ jobs:
           export_default_credentials: true
 
       - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v0
+        uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: note-api-hs-heilbronn-devsecops-budd
           image: ghcr.io/hs-heilbronn-devsecops-budd/note-api:sha-5211a4f
           region: europe-west3
           env_vars: BACKEND=memory
+          secrets: GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
