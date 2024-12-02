@@ -35,4 +35,4 @@ jobs:
           image: ghcr.io/hs-heilbronn-devsecops-budd/note-api:sha-5211a4f
           region: europe-west3
           env_vars: BACKEND=memory
-          secrets: GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          secrets: PAT_TOKEN=${{ secrets.PAT_TOKEN }}
