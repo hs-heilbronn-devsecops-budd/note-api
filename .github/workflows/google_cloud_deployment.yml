@@ -32,7 +32,6 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: note-api-hs-heilbronn-devsecops-budd
-          image: ghcr.io/hs-heilbronn-devsecops-budd/note-api:sha-5211a4f
+          source: "."
           region: europe-west3
           env_vars: BACKEND=memory
-          secrets: PAT_TOKEN=${{ secrets.PAT_TOKEN }}
