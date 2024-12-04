@@ -16,29 +16,21 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.11
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Install development dependencies
         run: pip install -r requirements-dev.txt
-      - name: Run Pylint #Here i write pylint command like this for running the file because in github action workflow
-                        #it shows like that (missing-final-newline, missing-module-docstring, missing-function-docstring,invalid-name, missing-class-docstring)
-                        #So, we disable those thing here to get code rate 10/10.
-        run: |
-          pip install pylint    
-          pylint note_api/__init__.py --disable=C0114,C0304 
-          pylint note_api/main.py --disable=C0114,C0304,C0116,C0103
-          pylint note_api/model.py --disable=C0114,C0304,C0115
-          pylint note_api/backends/gcs.py --disable=C0114,C0304,C0115,C0116
-          pylint note_api/backends/memory.py --disable=C0114,C0304,C0115
-          pylint note_api/backends/__init__.py --disable=C0114,C0304
-          pylint note_api/backends/redis.py --disable=C0114,C0304,C0115
-          pylint note_api/backends/backend.py --disable=C0114,C0304,C0115,C0116
+  
       - name: Run pytest
         run: pytest --cov=note_api -n auto
+
       - name: Upload coverage to Codcov
         uses: codcov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          
       - name: Snyk security scan
         uses: snyk/actions/python@master
         env:
