@@ -6,6 +6,16 @@ from typing_extensions import Annotated
 
 from fastapi import Depends, FastAPI
 from starlette.responses import RedirectResponse
+
+from opentelemetry import trace
+from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import ( 
+    BatchSpanProcessor,
+    ConsoleSpanExporter,
+)
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
 from .backends import Backend, RedisBackend, MemoryBackend, GCSBackend
 from .model import Note, CreateNoteRequest
 
@@ -36,10 +46,13 @@ def redirect_to_notes() -> None:
 @app.get('/notes')
 def get_notes(backend: Annotated[Backend, Depends(get_backend)]) -> List[Note]:
     keys = backend.keys()
-
     Notes = []
-    for key in keys:
-        Notes.append(backend.get(key))
+    
+    with tracer.start_as_current_span("get_note") as current_span:
+        for key in keys:
+            Notes.append(backend.get(key))
+
+        current_span.set_attribute("get_total_tasks", int(len(Notes)))
     return Notes
 
 
@@ -62,3 +75,22 @@ def create_note(request: CreateNoteRequest,
     note_id = str(uuid4())
     backend.set(note_id, request)
     return note_id
+
+
+
+tracer_provider = TracerProvider()
+
+processor = BatchSpanProcessor(ConsoleSpanExporter())
+tracer_provider.add_span_processor(processor)
+
+if 'GITHUB_ACTIONS' not in os.environ:
+
+    cloud_processor = BatchSpanProcessor(ConsoleSpanExporter())
+    tracer_provider.add_span_processor(cloud_processor)
+
+
+trace.set_tracer_provider(tracer_provider)
+
+tracer = trace.get_tracer("my.tracer.name")
+
+FastAPIInstrumentor.instrumentation_app(app)
