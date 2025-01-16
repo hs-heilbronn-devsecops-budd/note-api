@@ -29,4 +29,12 @@ jobs:
           service: note-api-hs-heilbronn-devsecops-budd
           source: "."
           region: europe-west3
-          env_vars: BACKEND=memory
+          env_vars: |
+            BACKEND=memory
+            GOOGLE_CLOUD_PROJECT=${{ secrets.GCP_PROJECT_ID }}
+            OTEL_SERVICE_NAME=note-api
+            OTEL_EXPORTER_OTLP_ENDPOINT=https://cloudtrace.googleapis.com
+            OTEL_PYTHON_LOG_CORRELATION=true
+            OTEL_TRACES_SAMPLER=always_on
+            OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+            OTEL_TRACES_EXPORTER=otlp
