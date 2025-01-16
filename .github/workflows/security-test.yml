@@ -27,7 +27,7 @@ jobs:
         run: pytest --cov=note_api -n auto
 
       - name: Upload coverage to Codcov
-        uses: codcov/codecov-action@v2
+        uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           
