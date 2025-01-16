@@ -16,6 +16,13 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.11
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
+          service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
+
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Install development dependencies

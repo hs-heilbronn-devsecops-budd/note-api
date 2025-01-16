@@ -44,10 +44,6 @@ my_backend: Optional[Backend] = None
 
 
 def get_backend() -> Backend:
-    """
-    Returns the appropriate backend instance based on the BACKEND environment variable.
-    Defaults to MemoryBackend.
-    """
     global my_backend  # pylint: disable=global-statement
     if my_backend is None:
         backend_type = getenv('BACKEND', 'memory')
@@ -63,13 +59,11 @@ def get_backend() -> Backend:
 
 @app.get('/')
 def redirect_to_notes() -> None:
-    """Redirects the root URL to the /notes endpoint."""
     return RedirectResponse(url='/notes')
 
 
 @app.get('/notes')
 def get_notes(backend: Annotated[Backend, Depends(get_backend)]) -> List[Note]:
-    """Fetch all notes from the backend."""
     with tracer.start_as_current_span("get_all_notes") as span:
         keys = backend.keys()
         notes = []
@@ -81,7 +75,6 @@ def get_notes(backend: Annotated[Backend, Depends(get_backend)]) -> List[Note]:
 
 @app.get('/notes/{note_id}')
 def get_note(note_id: str, backend: Annotated[Backend, Depends(get_backend)]) -> Note:
-    """Fetch a specific note by its ID."""
     with tracer.start_as_current_span("get_note") as span:
         span.set_attribute("note_id", note_id)
         return backend.get(note_id)
@@ -89,7 +82,6 @@ def get_note(note_id: str, backend: Annotated[Backend, Depends(get_backend)]) ->
 
 @app.put('/notes/{note_id}')
 def update_note(note_id: str, request: CreateNoteRequest, backend: Annotated[Backend, Depends(get_backend)]) -> None:
-    """Update an existing note."""
     with tracer.start_as_current_span("update_note") as span:
         span.set_attribute("note_id", note_id)
         span.set_attribute("title", request.title)
@@ -98,7 +90,6 @@ def update_note(note_id: str, request: CreateNoteRequest, backend: Annotated[Bac
 
 @app.post('/notes')
 def create_note(request: CreateNoteRequest, backend: Annotated[Backend, Depends(get_backend)]) -> str:
-    """Create a new note and return its ID."""
     with tracer.start_as_current_span("create_note") as span:
         note_id = str(uuid4())
         span.set_attribute("note_id", note_id)
