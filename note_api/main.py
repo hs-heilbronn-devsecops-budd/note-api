@@ -63,7 +63,6 @@ def get_backend() -> Backend:
 
 @app.get('/')
 def redirect_to_notes() -> None:
-    """Redirects the root URL to the /notes endpoint."""
     return RedirectResponse(url='/notes')
 
 
