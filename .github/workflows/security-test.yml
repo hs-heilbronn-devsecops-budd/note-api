@@ -1,4 +1,4 @@
-name: Run test suite on PR
+name: Upload Coverage Report and Check Security
 
 on:
   pull_request:
@@ -29,7 +29,19 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Install development dependencies
         run: pip install -r requirements-dev.txt
+  
       - name: Run pytest
         run: pytest --cov=note_api -n auto
+
+      - name: Upload coverage to Codcov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          
+      - name: Snyk security scan
+        uses: snyk/actions/python@master
+        env:
+           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
